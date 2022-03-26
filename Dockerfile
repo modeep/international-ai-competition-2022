@@ -7,5 +7,8 @@ RUN echo server will be running on # Your Port
 COPY ./requirements.txt /app/
 RUN /usr/local/bin/python -m pip install --upgrade pip & pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
+# COPY 
+WORKDIR /app
+
 ENTRYPOINT ["python"]
 CMD ["main.py"]
