@@ -12,3 +12,7 @@ requests
 # Plotting
 pandas
 matplotlib
+
+# Math
+cython
+logger
