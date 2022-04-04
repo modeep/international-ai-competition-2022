@@ -1,4 +1,4 @@
-# pip3 install -r requirements.txt
+# pip install -r requirements.txt
 
 # Base
 torch
@@ -12,3 +12,11 @@ requests
 # Plotting
 pandas
 matplotlib
+
+# Math
+cython
+logger
+
+# Google Drive
+gdown
+google-api-python-client
