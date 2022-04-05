@@ -16,6 +16,8 @@ matplotlib
 # Math
 cython
 logger
+addict
+termcolor
 
 # Google Drive
 gdown
