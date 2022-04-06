@@ -5,20 +5,25 @@ https://github.com/fmassa/vision/blob/voc_dataset/torchvision/datasets/voc.py
 
 Updated by: Ellis Brown, Max deGroot
 """
+
 import os
 import pickle
 import os.path
+import sys
 import torch
 import torch.utils.data as data
 import torchvision.transforms as transforms
 import cv2
 import numpy as np
 import json
+import uuid
 from utils.pycocotools.coco import COCO
 from utils.pycocotools.cocoeval import COCOeval
+from utils.pycocotools import mask as COCOmask
 
 
 class COCODetection(data.Dataset):
+
     def __init__(self, root, image_sets, preproc=None, target_transform=None,
                  dataset_name='COCO'):
         self.root = root

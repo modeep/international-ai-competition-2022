@@ -1,4 +1,6 @@
 import torch
+import torch.nn as nn
+import torch.backends.cudnn as cudnn
 from math import sqrt as sqrt
 from itertools import product as product
 

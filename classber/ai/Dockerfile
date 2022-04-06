@@ -8,7 +8,7 @@ COPY ../../requirements.txt /app/
 RUN /usr/local/bin/python -m pip install --upgrade pip & pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 COPY /models/ /app/models/
-COPY classber.py /app/
+COPY demo.py /app/
 WORKDIR /app
 
 ENTRYPOINT ["python"]

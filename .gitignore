@@ -1,5 +1,11 @@
 .DS_Store
 __pychche__
 .idea
-/classber/ai/weights/
-/classber/ai/utils/pycocotools/__pycache__
+classber/ai/weights/
+
+classber/ai/__pycache__
+classber/ai/data/__pycache__
+classber/ai/layers/__pycache__
+classber/ai/utils/__pycache__
+classber/ai/utils/pycocotools/__pycache__
+classber/ai/configs/__pycache__

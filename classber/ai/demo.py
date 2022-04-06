@@ -1,24 +1,25 @@
-# Import Library
+import os
 import cv2
+import numpy as np
+import time
+from torch.multiprocessing import Pool
+from utils.nms_wrapper import nms
+from utils.timer import Timer
+from configs.CC import Config
+import argparse
 from layers.functions import Detect, PriorBox
-from models.m2det import build_net
+from m2det import build_net
 from data import BaseTransform
 from utils.core import *
-from models.m2det_model import m2det_download, vgg_download
-import argparse
-from configs.CC import Config
-
-
-m2det_download()
-vgg_download()
+from utils.pycocotools.coco import COCO
 
 parser = argparse.ArgumentParser(description='M2Det Testing')
 parser.add_argument('-c', '--config', default='configs/m2det512_vgg.py', type=str)
 parser.add_argument('-f', '--directory', default='imgs/', help='the path to demo images')
 parser.add_argument('-m', '--trained_model', default='weights/m2det512_vgg.pth', type=str, help='Trained state_dict file path to open')
 parser.add_argument('--video', default=False, type=bool, help='videofile mode')
-parser.add_argument('--cam', default=0, type=int, help='camera device id')
-parser.add_argument('--show', action='store_true', help='Whether to display the images')
+parser.add_argument('--cam', default=-1, type=int, help='camera device id')
+parser.add_argument('--show', default=True, action='store_true', help='Whether to display the images')
 args = parser.parse_args()
 
 print_info(' ----------------------------------------------------------------------\n'

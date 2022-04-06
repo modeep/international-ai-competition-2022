@@ -1,7 +1,7 @@
 import torch
+import torch.nn as nn
+import math
 import numpy as np
-
-
 if torch.cuda.is_available():
     import torch.backends.cudnn as cudnn
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
