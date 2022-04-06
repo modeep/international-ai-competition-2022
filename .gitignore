@@ -6,6 +6,8 @@ classber/ai/weights/
 classber/ai/__pycache__
 classber/ai/data/__pycache__
 classber/ai/layers/__pycache__
+classber/ai/layers/functions/__pycache__
+classber/ai/layers/modules/__pycache__
 classber/ai/utils/__pycache__
 classber/ai/utils/pycocotools/__pycache__
 classber/ai/configs/__pycache__
