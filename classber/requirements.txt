@@ -8,6 +8,7 @@ opencv-python
 pillow
 tqdm
 requests
+mediapipe
 
 # Plotting
 pandas
