@@ -11,3 +11,5 @@ classber/ai/layers/modules/__pycache__
 classber/ai/utils/__pycache__
 classber/ai/utils/pycocotools/__pycache__
 classber/ai/configs/__pycache__
+
+car/data/yolov4.weights
