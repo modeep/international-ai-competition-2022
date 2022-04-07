@@ -5,45 +5,48 @@
 Project CLASSBER는 실시간으로 물건을 따라다니는 AI 카메라를 만드는 것이 목표이다.
 
 ## Model
-Model은 [M2Det](https://github.com/VDIGPKU/M2Det) 이라는 Model을 사용하였다.
+Detect Model은 [M2Det](https://github.com/VDIGPKU/M2Det) 이라는 Model을 사용하였다.
+Hand Landmark Model은 [빵형의 MediaPipe 응용](https://www.youtube.com/watch?v=udeQhZHx-00) 을 참고하였다.
 
-## How To RUN
-### 1. Setting
+## Installation
 ```
-$ cd classber/ai
+$ cd classber
 $ pip3 install -r requirements.txt
 
+$ cd detect_ai
 $ sh make.sh
 
-# Model Install
 $ cd models
 $ python3 m2det_model.py
 ```
 
-### 2. Demo
+## Detect Model How To RUN
+### 1. Detect Demo
 ```
-$ cd classber/ai
+$ cd classber/detect_ai
 
 # Img
 $ python3 demo.py -c=configs/m2det512_vgg.py -m=weights/m2det512_vgg.pth --show
 # Cam
 $ python3 demo.py -c=configs/m2det512_vgg.py -m=weights/m2det512_vgg.pth --show --cam=0
 
-# Classber
-$ python3 classber.py
+$ python3 classber_bottle.py
 ```
 
-### 3. Evaluation
+### 2. Evaluation
 ```
 $ python3 test.py -c=configs/m2det512_vgg.py -m=weights/m2det512_vgg.pth
 $ python test.py -c=configs/m2det512_vgg.py -m=weights/m2det512_vgg.pth --test
 ```
 
-### 4. Training
+### 3. Training
 All training configs and model configs are written well in configs/*.py.
 ```
 $ CUDA_VISIBLE_DEVICES=0,1,2,3 python train.py -c=configs/m2det512_vgg.py --ngpu 4 -t True
 ```
+
+## Hand Detect How To RUN
+
 
 ## Reference
 [https://github.com/VDIGPKU/M2Det#Training](https://github.com/VDIGPKU/M2Det#Training)
