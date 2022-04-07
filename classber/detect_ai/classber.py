@@ -10,13 +10,11 @@ from utils.core import *
 
 parser = argparse.ArgumentParser(description='Classber')
 parser.add_argument('-c', '--config', default='configs/m2det512_vgg.py', type=str)
-# parser.add_argument('-f', '--directory', # default='imgs/'
-#                     default=None, help='the path to demo images')
-parser.add_argument('-f', '--directory', default='imgs/', help='the path to demo images')
+parser.add_argument('-f', '--directory',    # default='imgs/'
+                    default=None, help='the path to demo images')
 parser.add_argument('-m', '--trained_model', default='weights/m2det512_vgg.pth', type=str, help='Trained state_dict file path to open')
 parser.add_argument('--video', default=False, type=bool, help='videofile mode')
-# parser.add_argument('--cam', default=0, type=int, help='camera device id')
-parser.add_argument('--cam', default=-1, type=int, help='camera device id')
+parser.add_argument('--cam', default=0, type=int, help='camera device id')
 parser.add_argument('--show', default=True, action='store_true', help='Whether to display the images')
 args = parser.parse_args()
 
@@ -24,6 +22,7 @@ args = parser.parse_args()
 print_info(' ----------------------------------------------------------------------\n'
            '|                              Classber                                |\n'
            ' ----------------------------------------------------------------------', ['yellow','bold'])
+
 
 cfg = Config.fromfile(args.config)
 anchor_config = anchors(cfg)
@@ -62,7 +61,7 @@ cats = [_.strip().split(',')[-1] for _ in open('data/coco_labels.txt', 'r').read
 labels = tuple(['__background__'] + cats)
 
 
-def draw_detection(im, bboxes, scores, cls_inds, fps, thr=0.85):
+def draw_detection(im, bboxes, scores, cls_inds, fps, thr=0.2):
     imgcv = np.copy(im)
     h, w, _ = imgcv.shape
     for i, box in enumerate(bboxes):
@@ -85,14 +84,14 @@ def draw_detection(im, bboxes, scores, cls_inds, fps, thr=0.85):
     return imgcv
 
 
-
-
 im_path = args.directory
 cam = args.cam
 video = args.video
+
 if cam >= 0:
     capture = cv2.VideoCapture(cam)
     video_path = './cam'
+
 if video:
     while True:
         video_path = input('Please enter video path: ')
@@ -101,6 +100,7 @@ if video:
             break
         else:
             print('No file!')
+
 if cam >= 0 or video:
     video_name = os.path.splitext(video_path)
     fourcc = cv2.VideoWriter_fourcc('m','p','4','v')
@@ -108,11 +108,11 @@ if cam >= 0 or video:
 im_fnames = sorted((fname for fname in os.listdir(im_path) if os.path.splitext(fname)[-1] == '.jpg'))
 im_fnames = (os.path.join(im_path, fname) for fname in im_fnames)
 im_iter = iter(im_fnames)
+
 while True:
     if cam < 0 and not video:
         try:
             fname = next(im_iter)
-            print(fname)
         except StopIteration:
             break
         if 'm2det' in fname:
@@ -124,12 +124,13 @@ while True:
             cv2.destroyAllWindows()
             capture.release()
             break
+
     loop_start = time.time()
-    w,h = image.shape[1],image.shape[0]
+    w, h = image.shape[1],image.shape[0]
     img = _preprocess(image).unsqueeze(0)
     if cfg.test_cfg.cuda:
         img = img.cuda()
-    scale = torch.Tensor([w,h,w,h])
+    scale = torch.Tensor([w, h, w, h])
     out = net(img)
     boxes, scores = detector.forward(out, priors)
     boxes = (boxes[0]*scale).cpu().numpy()
@@ -156,16 +157,18 @@ while True:
     cls_list = cls_inds.tolist()
     cls_list = list(map(int, cls_list))
 
+    # @문서준 이거 보세요.
     print('\n'.join(['pos:{}, ids:{}, score:{:.3f}'.format('(%.1f,%.1f,%.1f,%.1f)' % (o[0], o[1], o[2], o[3]),
-                                                labels[int(oo)], ooo) for o, oo, ooo in zip(boxes, cls_inds, scores)]))
-    fps = 1.0 / float(loop_time) if cam >= 0 or video else -1
+                                               labels[int(oo)], ooo) for o, oo, ooo in zip(boxes, cls_inds, scores)]))
 
+    fps = 1.0 / float(loop_time) if cam >= 0 or video else -1
     for i in cls_list:
         if i == 40 or i == 42:
             im2show = draw_detection(image, boxes, scores, cls_inds, fps)
         # print bbox_pred.shape, iou_pred.shape, prob_pred.shape
         else:
             pass
+    # print bbox_pred.shape, iou_pred.shape, prob_pred.shape
 
     if im2show.shape[0] > 1100:
         im2show = cv2.resize(im2show,

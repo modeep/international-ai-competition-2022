@@ -39,7 +39,7 @@
 43,39,tennis_racket
 44,40,bottle
 46,41,wine_glass
-47,42,cup
+47,42,bottle
 48,43,fork
 49,44,knife
 50,45,spoon
