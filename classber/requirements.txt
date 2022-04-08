@@ -1,0 +1,24 @@
+# pip install -r requirements.txt
+
+# Base
+torch
+torchvision
+numpy
+opencv-python
+pillow
+tqdm
+requests
+mediapipe
+
+# Plotting
+pandas
+matplotlib
+
+# Math
+cython
+logger
+addict
+termcolor
+
+# Google Drive
+gdown
