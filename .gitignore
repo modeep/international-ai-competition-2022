@@ -2,6 +2,7 @@
 __pychche__
 .idea
 
+nft/DCGAN/datasets/
 classber/detect_ai/weights/
 classber/detect_ai/__pycache__
 classber/detect_ai/data/__pycache__
