@@ -3,3 +3,6 @@ __pychche__
 .idea
 
 nft/DCGAN/datasets/
+nft/DCGAN/*.png
+nft/DCGAN/__pycache__
+nft/DCGAN/result
