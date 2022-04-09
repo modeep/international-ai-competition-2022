@@ -3,6 +3,18 @@ __pychche__
 .idea
 
 nft/DCGAN/datasets/
+nft
 nft/DCGAN/*.png
 nft/DCGAN/__pycache__
 nft/DCGAN/result
+classber/detect_ai/weights/
+classber/detect_ai/__pycache__
+classber/detect_ai/data/__pycache__
+classber/detect_ai/layers/__pycache__
+classber/detect_ai/layers/functions/__pycache__
+classber/detect_ai/layers/modules/__pycache__
+classber/detect_ai/utils/__pycache__
+classber/detect_ai/utils/pycocotools/__pycache__
+classber/detect_ai/configs/__pycache__
+
+car/data/yolov4.weights
