@@ -1,3 +1,4 @@
+from tkinter import Y
 from flask import Flask, render_template, Response
 from flask_socketio import SocketIO
 import serial
@@ -6,12 +7,14 @@ import cv2
 from threading import Thread
 import time
 
+from camera.oak_d_poe import oak_read
+
+
 scroll_status = 0
 
 def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
     @app.route('/')
     def index():
-        """Video streaming home page."""
         return render_template('index.html')
 
     def run_model(frame):
@@ -24,13 +27,13 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
 
 
     def gen():
-        cap = cv2.VideoCapture(0)
-        
+        oak_device = oak_read()
+
         prev_time = time.time()
-        while(cap.isOpened()):
-            ret, img = cap.read()
-            if ret == True:
-                frame = cv2.imencode('.jpg', img)[1].tobytes()
+        with oak_device as device:
+            qRgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
+            while True:
+                frame = cv2.imencode('.jpg', qRgb.get().getCvFrame())[1].tobytes()
                 yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
                 time.sleep(0.05)
                 end_time = time.time()
@@ -39,8 +42,6 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
                     thread.daemon = True
                     prev_time = time.time()
                     thread.start()
-            else: 
-                break
 
     @app.route('/video_feed')
     def video_feed():
@@ -55,7 +56,6 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
 
     @socket_io.on("scroll")
     def scroll(message):
-        global scroll_status
         print(message)
         scroll_status += int(message["scroll"])
         socket_io.emit('scroll', {"scroll_status" : scroll_status})
