@@ -11,6 +11,7 @@ from camera.oak_d_poe import oak_read
 
 
 scale_statue = 0
+scale_flag = 0
 
 def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
     @app.route('/')
@@ -48,16 +49,34 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
         return Response(gen(),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
 
-    @socket_io.on("move")
-    def request(message):
+    @socket_io.on("startmove")
+    def start_move(message):
         message = str(message)
         arduino.write(message.encode('utf-8'))
 
-    @socket_io.on("scroll")
-    def scroll(message):
-        global scale_statue
-        scale_statue += int(message["scroll"])
-        socket_io.emit('scroll', {"scale_statue" : scale_statue})
+    @socket_io.on("endmove")
+    def end_move():
+        arduino.write('0'.encode('utf-8'))
+
+    @socket_io.on("startcloseup")
+    def start_closeup(message):
+        global scale_status, scale_flag
+
+        scale_flag = 1
+
+        while scale_flag == 1:
+            scale_status += 0.01 * message
+
+            if scale_status > 1: scale_status = 1
+            elif scale_status < 0: scale_status = 0
+
+            socket_io.emit('scroll', {"scale_status" : scale_status})
+            time.sleep(0.1)
+
+    @socket_io.on("endcloseup")
+    def end_closeup():
+        global scale_flag
+        scale_flag = 0
 
 if __name__ == '__main__':
     app = Flask(__name__)
