@@ -2,11 +2,11 @@ import torch
 import torch.nn as nn
 
 
-class Generator(nn.Module):  # signals neural network
+class Generator(nn.Module):
     def __init__(self,
-                 z_dim=100,  # noise vector
-                 im_chan=3,  # color chanel, 3 for red green blue
-                 hidden_dim=64):  # spatial size of feature map (conv)
+                 z_dim=100,
+                 im_chan=3,
+                 hidden_dim=64):
 
         super(Generator, self).__init__()
         self.z_dim = z_dim
@@ -14,25 +14,25 @@ class Generator(nn.Module):  # signals neural network
         self.hidden_dim = hidden_dim
 
         self.generator_cnn = nn.Sequential(self.block(z_dim, hidden_dim * 8, stride=1, padding=0),
-                                           # (64*8) x 4 x 4
+
                                            self.block(hidden_dim * 8, hidden_dim * 4),
-                                           # (64*4) x 8 x 8
+
                                            self.block(hidden_dim * 4, hidden_dim * 2),
-                                           # (64*2) x 16 x 16
+
                                            self.block(hidden_dim * 2, hidden_dim),
-                                           # (64) x 32 x 32
+
                                            self.block(hidden_dim, im_chan, final_layer=True))
 
     def block(self,
-                       im_chan,  # image dimension
-                       op_chan,  # output dimension
+                       im_chan,
+                       op_chan,
                        kernel_size=4,
                        stride=2,
                        padding=1,
                        final_layer=False):
 
         layers = []
-        # de-convolutional layer
+
         layers.append(nn.ConvTranspose2d(im_chan,
                                          op_chan,
                                          kernel_size,
@@ -62,9 +62,9 @@ class Generator(nn.Module):  # signals neural network
 
 class Discriminator(nn.Module):
     def __init__(self,
-                 im_chan=3,  # image channels, 3 for red green blue
-                 conv_dim=64,  # spatial dimension of feature map
-                 image_size=64):  # spatial size of training images
+                 im_chan=3,
+                 conv_dim=64,
+                 image_size=64):
 
         super(Discriminator, self).__init__()
         self.image_size = image_size
@@ -74,7 +74,7 @@ class Discriminator(nn.Module):
                                       self.block(conv_dim, conv_dim * 2),
                                       self.block(conv_dim * 2, conv_dim * 4),
                                       self.block(conv_dim * 4, conv_dim * 8),
-                                      # no need a sigmoid here since it is included in the loss function
+
                                       self.block(conv_dim * 8, 1, padding=0, final_layer=True))
 
     def block(self,
@@ -98,7 +98,6 @@ class Discriminator(nn.Module):
 
         return nn.Sequential(*layers)
 
-    # given an image tensor, returns a 1-dimension tensor representing fake/real
     def forward(self, image):
         pred = self.disc_cnn(image)
         pred = pred.view(image.size(0), -1)

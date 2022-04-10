@@ -9,16 +9,13 @@ def get_dataloader(batch_size,
 
     stats = (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)
 
-    # create transformer to transform images
-    transform = transforms.Compose([transforms.Resize((image_size, image_size)),  # resize
-                                    transforms.ToTensor(),  # convert to tensor
-                                    transforms.Normalize(*stats)])  # normalize to be between -1 and 1
+    transform = transforms.Compose([transforms.Resize((image_size, image_size)),
+                                    transforms.ToTensor(),
+                                    transforms.Normalize(*stats)])
 
-    # create the dataset
     dataset = datasets.ImageFolder(root=data_dir,
                                    transform=transform)
 
-    # create the dataloader
     data_loader = torch.utils.data.DataLoader(dataset,
                                               batch_size=batch_size,
                                               shuffle=True,
