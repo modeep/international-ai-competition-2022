@@ -10,7 +10,7 @@ import time
 from camera.oak_d_poe import oak_read
 
 
-scroll_status = 0
+scale_statue = 0
 
 def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
     @app.route('/')
@@ -51,14 +51,13 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
     @socket_io.on("move")
     def request(message):
         message = str(message)
-        print(f"message : {message}")
         arduino.write(message.encode('utf-8'))
 
     @socket_io.on("scroll")
     def scroll(message):
-        print(message)
-        scroll_status += int(message["scroll"])
-        socket_io.emit('scroll', {"scroll_status" : scroll_status})
+        global scale_statue
+        scale_statue += int(message["scroll"])
+        socket_io.emit('scroll', {"scale_statue" : scale_statue})
 
 if __name__ == '__main__':
     app = Flask(__name__)
