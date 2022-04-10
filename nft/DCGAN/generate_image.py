@@ -14,7 +14,7 @@ generator = Generator(z_dim=100,
 sample_size = 8
 z_dim = 100
 
-def print_tensor_images(images_tensor, epoch):
+def save_images(images_tensor, epoch):
 
     plt.rcParams['figure.figsize'] = (15, 15)
     plt.subplots_adjust(wspace=0, hspace=0)
@@ -34,13 +34,13 @@ def print_tensor_images(images_tensor, epoch):
 
     plt.savefig(f'result/{epoch}.png')
 
-checkpoint = torch.load("weights/230_model.tar")
+checkpoint = torch.load("weights/450_model.tar")
 generator.load_state_dict(checkpoint["Generator"])
 generator.to(device)
 generator.eval()
-for i in range(0, 100):
+for i in range(0, 10):
     fixed_z = Generator.get_noise(n_samples=sample_size,
                                       z_dim=z_dim,
                                       device=device)
     sample_image = generator(fixed_z)
-    print_tensor_images(sample_image, i)
+    save_images(sample_image, i)

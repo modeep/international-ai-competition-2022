@@ -16,24 +16,14 @@ image_root = "datasets/"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print("Device is ", device)
 
-z_dim = 100
-beta_1 = 0.5
-beta_2 = 0.999
-lr = 0.0002
-n_epochs = 100
-batch_size = 128
-image_size = 64
-
-generator = Generator(z_dim,
-                      im_chan=3,
-                      hidden_dim=64).to(device)
-
-print(generator)
+generator = Generator(z_dim=100,
+              im_chan=3,
+              hidden_dim=64).to(device)
 
 discriminator = Discriminator(im_chan=3,
                               conv_dim=64,
-                              image_size=image_size).to(device)
-print(discriminator)
+                              image_size=64).to(device)
+
 
 def save_images(images_tensor, epoch):
 
@@ -55,8 +45,8 @@ def save_images(images_tensor, epoch):
 
     plt.savefig(f'{epoch}.png')
 
-
 def train(D, G,
+          start_epochs,
           n_epochs,
           dataloader,
           d_optimizer,
@@ -70,7 +60,7 @@ def train(D, G,
                                   z_dim=z_dim,
                                   device=device)
 
-    for epoch in tqdm(range(1, n_epochs + 1)):
+    for epoch in tqdm(range(start_epochs + 1, n_epochs + 1)):
         for batch_i, (real_images, _) in tqdm(enumerate(dataloader)):
             batch_size = real_images.size(0)
             real_images = real_images.to(device)
@@ -130,6 +120,18 @@ def train(D, G,
                 'Discriminator':D.state_dict()
             }, f"weights/{epoch}_model.tar")
 
+checkpoint = torch.load("weights/460_model.tar")
+generator.load_state_dict(checkpoint["Generator"])
+discriminator.load_state_dict(checkpoint["Discriminator"])
+
+dataloader = get_dataloader(128,
+                            64,
+                            image_root)
+
+beta_1 = 0.5
+beta_2 = 0.999
+lr = 0.0002
+
 g_optimizer = optim.Adam(generator.parameters(),
                          lr=lr,
                          betas=(beta_1, beta_2))
@@ -138,29 +140,18 @@ d_optimizer = optim.Adam(discriminator.parameters(),
                          lr=lr,
                          betas=(beta_1, beta_2))
 
-dataloader = get_dataloader(batch_size,
-                            image_size,
-                            image_root)
+g_optimizer.load_state_dict(checkpoint["G_optimizer"])
+d_optimizer.load_state_dict(checkpoint["D_optimizer"])
 
 n_epochs = 500
 train(discriminator,
       generator,
+      460,
       n_epochs,
       dataloader,
       d_optimizer,
       g_optimizer,
-      z_dim,
-      save_image_every=5,
+      100,
+      save_image_every=1,
       save_model_every=10,
       device=device)
-
-generator.to(device)
-generator.eval()
-sample_size=8
-
-for i in tqdm(range(2, 10)):
-    fixed_z = Generator.get_noise(n_samples=sample_size,
-                                      z_dim=z_dim,
-                                      device=device)
-    sample_image = generator(fixed_z)
-    save_images(sample_image, i)
