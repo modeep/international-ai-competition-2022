@@ -6,16 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joystick</title>
     <link rel="stylesheet" href="./index.css">
+    <script src="./assets/js/socket.io.min.js"></script>
 </head>
 <body>
     <div class="wrapper">
         <div class="halfWrapper flex col">
-            <button class="button flex" style="margin-bottom: 5vh;">위</button>
-            <button class="button flex">아래</button>
+            <h3 class="title">Zoom in / Zoom out</h3>
+            <button id="up" class="button flex topButton">
+                <img class="up" src="./assets/img/up.png">
+            </button>
+            <button id="down" class="button flex">
+                <img class="down" src="./assets/img/down.png">
+            </button>
         </div>
         <div class="halfWrapper flex">
-            <button class="button flex" style="margin-right: 5vw;">왼쪽</button>
-            <button class="button flex">오른쪽</button>
+            <h3 class="title">Camera move Left / Right</h3>
+            <button id="left" class="button flex leftButton">
+                <img class="left" src="./assets/img/left.png">
+            </button>
+            <button id="right" class="button flex">
+                <img class="right" src="./assets/img/right.png">
+            </button>
         </div>
     </div>
     <script src="./index.js"></script>
