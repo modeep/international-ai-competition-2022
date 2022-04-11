@@ -9,10 +9,10 @@ import time
 scale_status = 1
 scale_flag = 0
 
+
 def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
     @app.route('/')
     def index():
-        """Video streaming home page."""
         return render_template('index.html', scale=scale_status**2)
 
     def run_model(frame):
@@ -23,7 +23,6 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
         arduino.write(f'{result_location}'.encode('utf-8'))
         # arduino serial control
         return
-
 
     def gen():
         cap = cv2.VideoCapture(1)
@@ -45,8 +44,7 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
 
     @app.route('/video_feed')
     def video_feed():
-        return Response(gen(),
-                        mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
     @socket_io.on("startmove")
     def start_move(message):
