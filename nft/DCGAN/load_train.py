@@ -24,7 +24,6 @@ discriminator = Discriminator(im_chan=3,
                               conv_dim=64,
                               image_size=64).to(device)
 
-
 def save_images(images_tensor, epoch):
 
     plt.rcParams['figure.figsize'] = (15, 15)
@@ -120,7 +119,7 @@ def train(D, G,
                 'Discriminator':D.state_dict()
             }, f"weights/{epoch}_model.tar")
 
-checkpoint = torch.load("weights/460_model.tar")
+checkpoint = torch.load("trained_weight/500_model.tar")
 generator.load_state_dict(checkpoint["Generator"])
 discriminator.load_state_dict(checkpoint["Discriminator"])
 
@@ -146,7 +145,7 @@ d_optimizer.load_state_dict(checkpoint["D_optimizer"])
 n_epochs = 500
 train(discriminator,
       generator,
-      460,
+      500,
       n_epochs,
       dataloader,
       d_optimizer,
