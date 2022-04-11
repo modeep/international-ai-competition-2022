@@ -1,0 +1,8 @@
+pyserial == "3.5"
+Flask == "2.1.1"
+python-engineio == "4.3.1"
+python-socketio == "5.5.2"
+Flask-SocketIO == "5.1.1"
+Flask-Cors == "3.0.10"
+opencv-python == "4.5.5"
+depthai == "2.15.2"
