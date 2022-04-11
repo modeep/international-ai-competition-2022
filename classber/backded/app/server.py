@@ -1,4 +1,3 @@
-from tkinter import Y
 from flask import Flask, render_template, Response
 from flask_socketio import SocketIO
 import serial
@@ -7,42 +6,42 @@ import cv2
 from threading import Thread
 import time
 
-from camera.oak_d_poe import oak_read
-
-
-scale_statue = 0
+scale_status = 1
 scale_flag = 0
 
 def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
     @app.route('/')
     def index():
-        return render_template('index.html')
+        """Video streaming home page."""
+        return render_template('index.html', scale=scale_status**2)
 
     def run_model(frame):
         print("running model!")
         for i in range(5000): print(i)
         print("model run end!")
-        arduino.write('1'.encode('utf-8'))
+        result_location = 0
+        arduino.write(f'{result_location}'.encode('utf-8'))
         # arduino serial control
         return
 
 
     def gen():
-        oak_device = oak_read()
-
+        cap = cv2.VideoCapture(1)
         prev_time = time.time()
-        with oak_device as device:
-            qRgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
-            while True:
-                frame = cv2.imencode('.jpg', qRgb.get().getCvFrame())[1].tobytes()
+        while True:
+            suc, frame = cap.read()
+            if suc:
+                frame = cv2.imencode('.jpg', frame)[1].tobytes()
                 yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-                time.sleep(0.05)
+                time.sleep(0.033)
                 end_time = time.time()
                 if end_time - prev_time > 10:
                     thread = Thread(target=run_model, args=(frame,))
                     thread.daemon = True
                     prev_time = time.time()
                     thread.start()
+            else:
+                break
 
     @app.route('/video_feed')
     def video_feed():
@@ -64,6 +63,8 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
 
         scale_flag = 1
 
+        print("Start CloseUP")
+
         while scale_flag == 1:
             scale_status += 0.01 * message
 
@@ -77,6 +78,7 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
     def end_closeup():
         global scale_flag
         scale_flag = 0
+        print("End CloseUP")
 
 if __name__ == '__main__':
     app = Flask(__name__)
