@@ -10,13 +10,10 @@ from utils.core import *
 
 parser = argparse.ArgumentParser(description='Classber')
 parser.add_argument('-c', '--config', default='configs/m2det512_vgg.py', type=str)
-parser.add_argument('-f', '--directory', # default=None,
-                    default='imgs/',
-                    help='the path to demo images')
+parser.add_argument('-f', '--directory', default='imgs/', help='the path to demo images')
 parser.add_argument('-m', '--trained_model', default='weights/m2det512_vgg.pth', type=str, help='Trained state_dict file path to open')
 parser.add_argument('--video', default=False, type=bool, help='videofile mode')
-# parser.add_argument('--cam', default=0, type=int, help='camera device id')
-parser.add_argument('--cam', default=-1, type=int, help='camera device id')
+parser.add_argument('--cam', default=0, type=int, help='camera device id')
 parser.add_argument('--show', default=True, action='store_true', help='Whether to display the images')
 args = parser.parse_args()
 
