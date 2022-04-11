@@ -76,10 +76,7 @@ class ClassBar:
                         0, 1e-3 * h, (0, 0, 255), thick // 3)
             return imgcv, boxs[n]
 
-    # def run_model(image:np.ndarray) -> Union[str, tuple, bool]:
     def run_model(self, image):
-        # cap = cv2.VideoCapture(cam)
-        # _, image = cap.read()
         w, h, _ = image.shape
 
         img = self._preprocess(image).unsqueeze(0)
