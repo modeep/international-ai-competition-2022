@@ -5,15 +5,14 @@
 ```
 $ git clone https://github.com/modeep/international-ai-competition-2022.git
 $ cd international-ai-competition-2022
-
-$ docker pull taki0412/ai-competition-2022
-$ docker run -it -d -p 8080:8080 --name "name" taki0412/ai-competition-2022
 ```
 
 ## QUICK_START
 ```
 $ git clone https://github.com/modeep/international-ai-competition-2022.git
 $ cd international-ai-competition-2022
+$ cd you_want_project
 $ pip3 install -r requrements.txt
-$ python3 main.py
+
+# AND YOU READ README.MD
 ```

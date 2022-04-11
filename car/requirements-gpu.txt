@@ -1,0 +1,9 @@
+numpy==1.18
+tensorflow-gpu==2.3.0
+opencv-python==4.5.5.62
+lxml
+tqdm
+absl-py
+matplotlib
+easydict
+pillow
