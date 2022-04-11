@@ -11,13 +11,13 @@ generator = Generator(z_dim=100,
               im_chan=3,
               hidden_dim=64)
 
-sample_size = 8
+sample_size = 9
 z_dim = 100
 
 def save_images(images_tensor, epoch):
 
-    plt.rcParams['figure.figsize'] = (8, 1)
-    plt.subplots_adjust(wspace=0.25, hspace=0)
+    plt.rcParams['figure.figsize'] = (3, 3)
+    plt.subplots_adjust(wspace=0.25, hspace=0.25)
 
     images_tensor = images_tensor.to('cpu')
     npimgs = images_tensor.detach().numpy()
@@ -25,7 +25,7 @@ def save_images(images_tensor, epoch):
     no_plots = len(images_tensor)
 
     for idx, image in enumerate(npimgs):
-        plt.subplot(1, 8, idx + 1)
+        plt.subplot(3, 3, idx + 1)
         plt.axis('off')
 
         image = image * 0.5 + 0.5
