@@ -43,7 +43,6 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial, classber):
 
     def gen():
         cap = cv2.VideoCapture(1)
-        print("Hello")
         prev_time = time.time()
         while True:
             suc, image = cap.read()
