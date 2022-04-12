@@ -4,13 +4,15 @@ from layers.functions import Detect
 from m2det import build_net
 from data import BaseTransform
 from utils.core import *
+from os import pardir
 
 
 class ClassBar:
     def __init__(self):
+
         parser = argparse.ArgumentParser(description='Classber')
-        parser.add_argument('-c', '--config', default='configs/m2det512_vgg.py', type=str)
-        parser.add_argument('-m', '--trained_model', default='weights/m2det512_vgg.pth', type=str,
+        parser.add_argument('-c', '--config', default='../../detect_ai/configs/m2det512_vgg.py', type=str)
+        parser.add_argument('-m', '--trained_model', default='../../detect_ai/weights/m2det512_vgg.pth', type=str,
                             help='Trained state_dict file path to open')
         parser.add_argument('--cam', default=0, type=int, help='camera device id')
         parser.add_argument('--show', default=True, action='store_true', help='Whether to display the images')
@@ -41,10 +43,9 @@ class ClassBar:
         self._preprocess = BaseTransform(self.cfg.model.input_size, self.cfg.model.rgb_means, (2, 0, 1))
         self.detector = Detect(self.cfg.model.m2det_config.num_classes, self.cfg.loss.bkg_label, anchor_config)
 
-        self.im_path = args.directory
         self.cam = args.cam
 
-    def draw_detection(self, im, bboxes, scores, cls_inds, thr=0.8):
+    def draw_detection(self, im, bboxes, scores, cls_inds, thr=0.4):
         imgcv = np.copy(im)
         h, w, _ = imgcv.shape
         boxs = []
@@ -78,8 +79,6 @@ class ClassBar:
 
     def run_model(self, image):
         w, h, _ = image.shape
-
-        img = self._preprocess(image).unsqueeze(0)
 
         if self.cfg.test_cfg.cuda:
             img = img.cuda()
@@ -117,14 +116,8 @@ class ClassBar:
             for i in cls_list:
                 if i == 40 or i == 42:
                     im2show, img_location = self.draw_detection(image, boxes, scores, cls_inds)
-                    cv2.imshow("classber", im2show)
-                    if cv2.waitKey():
-                        cv2.destroyAllWindows()
                     return im2show, img_location
                 else:
                     continue
         else:
-            cv2.imshow("classber", image)
-            if cv2.waitKey():
-                cv2.destroyAllWindows()
             return image, None
