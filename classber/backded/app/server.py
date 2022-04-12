@@ -6,39 +6,52 @@ import cv2
 from threading import Thread
 import time
 
+from classber.detect_ai.classber_bottle import ClassBar
+
 scale_status = 1
 scale_flag = 0
 
 
-def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
+def create_app(app, socket_io:SocketIO, arduino:serial.Serial, classber):
     @app.route('/')
     def index():
         return render_template('index.html', scale=scale_status**2)
 
     def run_model(frame):
         print("running model!")
-        for i in range(5000): print(i)
+        _, result_location = classber.run_model(frame)
         print("model run end!")
-        result_location = 0
-        arduino.write(f'{result_location}'.encode('utf-8'))
-        # arduino serial control
+
+        if result_location is None:
+            return
+
+        print("Detect!@!!!!!")
+
+        x1, _, x2, _ = result_location
+
+        object_mid = int(((x2 - x1) / 2) + x1)
+        frame_width = int(frame.shape[0] / 2)
+        motor_step_value = object_mid - frame_width
+
+        if motor_step_value > 5:
+            arduino.write(f'-1'.encode('utf-8'))
+        elif motor_step_value < -5:
+            arduino.write(f'1'.encode('utf-8'))
+        time.sleep(0.05)
+        arduino.write(f'0'.encode('utf-8'))
         return
 
     def gen():
         cap = cv2.VideoCapture(1)
         prev_time = time.time()
         while True:
-            suc, frame = cap.read()
+            suc, image = cap.read()
             if suc:
-                frame = cv2.imencode('.jpg', frame)[1].tobytes()
+                frame = cv2.imencode('.jpg', image)[1].tobytes()
                 yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-                time.sleep(0.033)
                 end_time = time.time()
-                if end_time - prev_time > 10:
-                    thread = Thread(target=run_model, args=(frame,))
-                    thread.daemon = True
-                    prev_time = time.time()
-                    thread.start()
+                if end_time - prev_time > 0.05:
+                    run_model(image)
             else:
                 break
 
@@ -78,12 +91,15 @@ def create_app(app, socket_io:SocketIO, arduino:serial.Serial):
         scale_flag = 0
         print("End CloseUP")
 
+
 if __name__ == '__main__':
     app = Flask(__name__)
     app.secret_key = "FlaskSecret"
     socket_io = SocketIO(app, cors_allowed_origins="*")
 
-    arduino = serial.Serial('COM9', 9600)
+    classber = ClassBar()
 
-    create_app(app, socket_io, arduino)
-    socket_io.run(app, host='0.0.0.0', port=5000)
+    arduino = serial.Serial('/dev/ttyACM1', 9600)
+
+    create_app(app, socket_io, arduino, classber)
+    socket_io.run(app, host='0.0.0.0', port=5000, debug=False)
